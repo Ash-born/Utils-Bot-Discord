@@ -35,6 +35,29 @@ class ServerManager(commands.Cog):
 
     @commands.command()
     @has_permissions(manage_roles=True, ban_members=True)
+    async def unban(self ,ctx, *, member):
+        try :
+            banned_users = await ctx.guild.bans()
+
+            member_name, member_discriminator = member.split('#')
+            for ban_entry in banned_users:
+                user = ban_entry.user
+
+                if (user.name, user.discriminator) == (member_name, member_discriminator):
+                    i = 0
+                    try :
+                       await ctx.guild.unban(user)
+                       await ctx.channel.send(f"Unbanned: {user.mention}")
+                       i += 1
+                    except :
+                        if i == 0 :
+                         await   ctx.channel.send("Denied Acces")
+        except :
+           await ctx.channel.send(f" An error occuried  : {member} is not banned")
+
+
+    @commands.command()
+    @has_permissions(manage_roles=True, ban_members=True)
     async def ban(self, ctx, member: discord.User = None, reason=None):
 
         if member == ctx.message.author:
