@@ -11,7 +11,7 @@ bot = commands.Bot(command_prefix=PREFIX, help_command=None)
 async def on_ready():
 
     print("Bot ready")
-    await bot.change_presence(game=discord.Game(f"{PREFIX}help | Bot à multiple fonctions"))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(f"{PREFIX}help | Bot à multiple fonctions"))
 
 
 bot.run(os.getenv("TOKEN"))
