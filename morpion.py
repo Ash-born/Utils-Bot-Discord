@@ -13,14 +13,6 @@ class Morpion(commands.Cog):
         self.bot = bot
         self.players_ingame = set()
 
-    def check_equality(self, board: list):
-        free = 0
-        for x in range(3):
-            for y in range(3):
-                if board[x][y] == self.EMPTY:
-                    free += 1
-
-
     def check_victory(self, board: list, player: str):
         cross1 = cross2 = True
         free = 0
@@ -47,8 +39,8 @@ class Morpion(commands.Cog):
         else:
             return None
 
-    def verify_input(self, input: str, board: list) -> bool:
-        pos = input.split()
+    def verify_message(self, message: str, board: list) -> bool:
+        pos = message.split()
         if len(pos) >= 2 and pos[0].isdigit() and pos[1].isdigit():
             x = int(pos[0])
             y = int(pos[1])
@@ -92,9 +84,9 @@ class Morpion(commands.Cog):
             self.players_ingame.update((ctx.author, member))
 
         def check(msg: discord.Message, player, board):
-            return msg.author == player and self.verify_input(msg.content, board)
+            return msg.author == player and self.verify_message(msg.content, board)
 
-        board = [[self.EMPTY for i in range(3)] for i in range(3)]
+        board = [[self.EMPTY for i in range(3)] for j in range(3)]
         await ctx.send(self.display_board(board))
 
         players = [(ctx.author, self.X), (member, self.O)]
