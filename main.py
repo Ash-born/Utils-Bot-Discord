@@ -3,9 +3,17 @@ import os
 from discord.ext import commands
 
 
+extensions = [
+    "morpion"
+]
+
 PREFIX = "utils "
 bot = commands.Bot(command_prefix=PREFIX, help_command=None)
 
+
+if __name__ == "__main__":
+    for extension in extensions:
+        bot.load_extension(extension)
 
 @bot.event
 async def on_ready():
