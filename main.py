@@ -3,9 +3,17 @@ import os
 from discord.ext import commands
 
 
+extensions = [
+    "tawassol"
+]
+
 PREFIX = "utils "
 bot = commands.Bot(command_prefix=PREFIX, help_command=None)
 
+
+if __name__ == "__main__":
+    for extension in extensions:
+        bot.load_extension(extension)
 
 @bot.event
 async def on_ready():
@@ -15,3 +23,4 @@ async def on_ready():
 
 
 bot.run(os.getenv("TOKEN"))
+
