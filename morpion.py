@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import random
+from copy import deepcopy
 from discord.ext import commands
 
 
@@ -8,6 +9,13 @@ class Morpion(commands.Cog):
     X = "X"
     O = "O"
     EMPTY = ""
+    EMOJIES = {
+        1: ":one:", 2: ":two:", 3: ":three:",
+        4: ":four:", 5: ":five:", 6: ":six:",
+        7: ":seven:", 8: ":eight:", 9: ":nine:",
+        X: ":red_square:", O: ":blue_square:"
+    }
+    BOARD = [[*range(i, i + 3)] for i in range(1, 10, 3)]
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -28,7 +36,7 @@ class Morpion(commands.Cog):
                 cross2 = False
 
             for y in range(3):
-                if board[rc][y] == self.EMPTY:
+                if board[rc][y] not in (self.O, self.X):
                     free += 1
 
         if cross1 or cross2:
@@ -39,19 +47,26 @@ class Morpion(commands.Cog):
         else:
             return None
 
-    def verify_message(self, message: str, board: list) -> bool:
-        pos = message.split()
-        if len(pos) >= 2 and pos[0].isdigit() and pos[1].isdigit():
-            x = int(pos[0])
-            y = int(pos[1])
-            if x < len(board) and y < len(board) and not board[x][y]:
-                return True
-        else:
+    def verify_message(self, message: discord.Message, player: discord.Member, board: list) -> bool:
+        if player != message.author:
             return False
 
-    def set_player_move(self, board: list, player: str, pos: tuple):
-        x = int(pos[0])
-        y = int(pos[1])
+        move = message.content
+        if len(move) < 1 or move < '1' or move > '9':
+            return False
+
+        move = int(move[0]) - 1
+        x = move // 3
+        y = move % 3
+        if board[x][y] in (self.O, self.X):
+            return False
+
+        return True
+
+    def set_player_move(self, board: list, player: str, pos: str):
+        move = int(pos[0]) - 1
+        x = move // 3
+        y = move % 3
         board[x][y] = player
 
     def display_board(self, board: list) -> str:
@@ -59,12 +74,8 @@ class Morpion(commands.Cog):
         for x in range(3):
             text += "\n"
             for y in range(len(board[x])):
-                if board[x][y] == self.X:
-                    text += ":red_square:"
-                elif board[x][y] == self.O:
-                    text += ":blue_square:"
-                else:
-                    text += ":black_large_square:"
+                emoji = self.EMOJIES[board[x][y]]
+                text += emoji
 
         return text
 
@@ -74,6 +85,13 @@ class Morpion(commands.Cog):
 
     @commands.command(name="morpion")
     async def start_game(self, ctx: commands.Context, member: discord.Member):
+        if ctx.author == member:
+            await ctx.send("Tu ne peux pas jouer contre toi-même.")
+            return
+        elif member.bot:
+            await ctx.send("Tu ne peux pas jouer contre un bot.")
+            return
+
         if ctx.author in self.players_ingame:
             await ctx.send("Vous avez déjà une partie en cours !")
             return
@@ -83,10 +101,7 @@ class Morpion(commands.Cog):
         else:
             self.players_ingame.update((ctx.author, member))
 
-        def check(msg: discord.Message, player, board):
-            return msg.author == player and self.verify_message(msg.content, board)
-
-        board = [[self.EMPTY for i in range(3)] for j in range(3)]
+        board = deepcopy(self.BOARD)
         await ctx.send(self.display_board(board))
 
         players = [(ctx.author, self.X), (member, self.O)]
@@ -96,15 +111,18 @@ class Morpion(commands.Cog):
         while running:
             await ctx.send(f"{current_player[0].display_name}, votre tour !")
             try:
-                msg = await self.bot.wait_for("message", check=lambda x: check(x, current_player[0], board), timeout=10)
+                msg = await self.bot.wait_for("message", check=lambda x: self.verify_message(x, current_player[0], board), timeout=10)
             except asyncio.TimeoutError:
                 winner = players[not turn]
-                await ctx.send(f"Le joueur {current_player[0].display_name}({current_player[1]}) n'a pas répondu... Le joueur {winner[0]}({winner[1]}) gagne la partie !")
+                text = f"""
+Le joueur {current_player[0].display_name}({current_player[1]}) n'a pas répondu...
+Le joueur {winner[0]}({winner[1]}) gagne la partie !"""
+
+                await ctx.send(text)
                 self.players_ingame.difference_update((ctx.author, member))
                 break
 
-            pos = msg.content.split()
-            self.set_player_move(board, current_player[1], pos)
+            self.set_player_move(board, current_player[1], msg.content)
             await ctx.send(self.display_board(board))
 
             victory = self.check_victory(board, current_player[1])
