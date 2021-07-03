@@ -13,7 +13,7 @@ class Morpion(commands.Cog):
         1: ":one:", 2: ":two:", 3: ":three:",
         4: ":four:", 5: ":five:", 6: ":six:",
         7: ":seven:", 8: ":eight:", 9: ":nine:",
-        X: ":red_square:", O: ":blue_square:"
+        X: ":x:", O: ":o:"
     }
     BOARD = [[*range(i, i + 3)] for i in range(1, 10, 3)]
 
