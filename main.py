@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import os
 
+from giveaway import Giveaway
 from server_manager import ServerManager
 PREFIX = "utils "
 client = commands.Bot(command_prefix=PREFIX)
@@ -15,6 +16,8 @@ async def on_ready():
                                  )
 
 
-
+Giveaway(client)
+client.add_cog(Giveaway(client))
+ServerManager(client)
 client.add_cog(ServerManager(client))
 client.run(os.getenv("TOKEN"))

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a5add51-755c-49a7-b1a9-e4c80430678f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/giveaway.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/server_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,7 +75,12 @@
       <workItem from="1625094196254" duration="1820000" />
       <workItem from="1625150438244" duration="5129000" />
       <workItem from="1625158749412" duration="134000" />
-      <workItem from="1625178008056" duration="989000" />
+      <workItem from="1625178008056" duration="5963000" />
+      <workItem from="1625221822624" duration="3780000" />
+      <workItem from="1625233741988" duration="3581000" />
+      <workItem from="1625307848870" duration="4359000" />
+      <workItem from="1625318060040" duration="11329000" />
+      <workItem from="1625345977038" duration="2613000" />
     </task>
     <servers />
   </component>
@@ -89,8 +97,9 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Utils_Bot_Discord$main.coverage" NAME="main Coverage Results" MODIFIED="1625179163718" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Utils_Bot_Discord$main.coverage" NAME="main Coverage Results" MODIFIED="1625347781433" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
