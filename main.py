@@ -4,7 +4,8 @@ from discord.ext import commands
 
 
 extensions = [
-    "morpion"
+  "tawassol",
+  "morpion"
 ]
 
 PREFIX = "utils "
