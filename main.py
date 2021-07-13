@@ -4,7 +4,8 @@ from discord.ext import commands
 
 
 extensions = [
-    "tawassol"
+  "tawassol",
+  "morpion"
 ]
 
 PREFIX = "utils "
@@ -23,4 +24,3 @@ async def on_ready():
 
 
 bot.run(os.getenv("TOKEN"))
-
