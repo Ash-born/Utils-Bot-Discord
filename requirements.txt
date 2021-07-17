@@ -1,5 +1,1 @@
 discord.py
-discord~=1.0.1
-datetime
-time
-pytz
