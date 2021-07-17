@@ -125,3 +125,5 @@ class Giveaway(commands.Cog):
       except :
             await ctx.send("Error found : Invalide Syntaxe ")
 
+def setup(bot):
+    bot.add_cog(Giveaway(bot))

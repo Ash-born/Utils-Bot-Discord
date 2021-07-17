@@ -7,6 +7,7 @@ extensions = [
   "tawassol",
   "morpion",
   "server_manager",
+  "giveaway"
 ]
 
 intents = discord.Intents.all()
