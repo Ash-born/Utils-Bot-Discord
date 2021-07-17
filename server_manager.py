@@ -1,18 +1,24 @@
 import discord
+import datetime
 from discord.ext.commands import has_permissions, MissingPermissions
 from discord.ext import commands
-import datetime
 
 
 class ServerManager(commands.Cog):
+    student_learn_day = datetime.date(2021, 4, 23)
+    student_id = 600333625887686666
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        if message.content == "day":
-            today = datetime.date.today()
-            last = datetime.date(2021, 4, 23)
-            diff = today - last
-            await message.channel.send(f"Days : {diff.days}")
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def days(self, ctx):
+        today = datetime.date.today()
+        diff = today - self.student_learn_day
+        text = f"Days : {diff.days}"
+        await ctx.channel.send(text)
+        member = ctx.guild.get_member(self.student_id)
+        await member.edit(nick=text)
 
     @commands.command()
     @has_permissions(kick_members=True)
@@ -55,3 +61,6 @@ class ServerManager(commands.Cog):
 
             if i == 0:
                 await ctx.channel.send("Denied Permession")
+
+def setup(bot):
+    bot.add_cog(ServerManager(bot))

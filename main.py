@@ -1,20 +1,28 @@
 import discord
-from discord.ext import commands
 import os
+from discord.ext import commands
 
-from server_manager import ServerManager
+
+extensions = [
+  "tawassol",
+  "morpion",
+  "server_manager",
+]
+
+intents = discord.Intents.all()
 PREFIX = "utils "
-client = commands.Bot(command_prefix=PREFIX)
+bot = commands.Bot(command_prefix=PREFIX, help_command=None, intents=intents)
 
 
-@client.event
+if __name__ == "__main__":
+    for extension in extensions:
+        bot.load_extension(extension)
+
+@bot.event
 async def on_ready():
+
     print("Bot ready")
-    await client.change_presence(status=discord.Status.online,
-                                 activity=discord.Game(f"{PREFIX}help | Bot à multiple fonctions")
-                                 )
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(f"{PREFIX}help | Bot à multiple fonctions"))
 
 
-
-client.add_cog(ServerManager(client))
-client.run(os.getenv("TOKEN"))
+bot.run(os.getenv("TOKEN"))
