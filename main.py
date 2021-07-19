@@ -5,11 +5,14 @@ from discord.ext import commands
 
 extensions = [
   "tawassol",
-  "morpion"
+  "morpion",
+  "server_manager",
+  "giveaway",
 ]
 
+intents = discord.Intents.all()
 PREFIX = "utils "
-bot = commands.Bot(command_prefix=PREFIX, help_command=None)
+bot = commands.Bot(command_prefix=PREFIX, help_command=None, intents=intents)
 
 
 if __name__ == "__main__":
