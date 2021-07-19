@@ -7,7 +7,7 @@ extensions = [
   "tawassol",
   "morpion",
   "server_manager",
-  "giveaway"
+  "giveaway",
 ]
 
 intents = discord.Intents.all()
@@ -24,5 +24,6 @@ async def on_ready():
 
     print("Bot ready")
     await bot.change_presence(status=discord.Status.online, activity=discord.Game(f"{PREFIX}help | Bot à multiple fonctions"))
+
 
 bot.run(os.getenv("TOKEN"))
