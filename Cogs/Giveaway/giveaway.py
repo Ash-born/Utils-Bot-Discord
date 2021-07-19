@@ -1,5 +1,4 @@
 import asyncio
-
 import discord
 from discord.ext import commands
 from datetime import timedelta
@@ -16,7 +15,7 @@ class Giveaway(commands.Cog):
 
     @commands.command()
     @has_permissions(administrator=True)
-    async def giveaway(self, ctx, times , *price):
+    async def giveaway(self, ctx, times, *price):
       try :
             if "d" in times:
                 unity = "d"
