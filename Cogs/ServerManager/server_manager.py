@@ -8,17 +8,22 @@ from discord.ext import commands
 
 
 class ServerManager(commands.Cog):
-    student_learn_day = datetime.date(2021, 4, 23)
+    student_old_learnday = datetime.date(2021, 4, 23)
+    student_new_learnday = datetime.date(2021, 7, 22)
     student_id = 600333625887686666
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def days(self, ctx):
+    async def day(self, ctx, counter="new"):
         today = datetime.date.today()
-        diff = today - self.student_learn_day
-        text = f"Days : {diff.days}"
+        if counter == "new":
+            diff = today - self.student_new_learnday
+        else:
+            diff = today - self.student_old_learnday
+
+        text = f"Day : {diff.days}"
         await ctx.channel.send(text)
         member = ctx.guild.get_member(self.student_id)
         await member.edit(nick=text)

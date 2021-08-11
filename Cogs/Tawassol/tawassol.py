@@ -1,8 +1,8 @@
 import discord
 import asyncio
 from discord.ext import commands
-from tawassol_client import TawassolClient
-from cooldown import Cooldown
+from Cogs.Tawassol.tawassol_client import TawassolClient
+from Cogs.Tawassol.cooldown import Cooldown
 from io import BytesIO
 
 
@@ -121,8 +121,12 @@ class Tawassol(commands.Cog):
 
         messages = await client.get_messages()
         if not start < end <= len(messages):
-            await ctx.send("Valeur de départ et/ou de fin ne sont pas valides")
-            return
+            if len(messages) <= 0:
+                await ctx.send("Il n'y a aucun message à afficher.")
+                return
+
+            start = 0
+            end = len(messages)
 
         cl = Cooldown.check_user("messages", ctx.author.id, 10)
         if not cl[0]:
@@ -132,7 +136,7 @@ class Tawassol(commands.Cog):
         bonus = end - start
         last_start = start
         while True:
-            embed = await client.generate_messages_embed(start, start + bonus)
+            embed = await client.generate_messages_embed(start, start + bonus, messages)
             try:
                 embed_msg = await ctx.send(embed=embed)
             except discord.HTTPException:

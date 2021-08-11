@@ -153,8 +153,7 @@ class TawassolClient:
 
         return out
 
-    async def generate_messages_embed(self, start: int, end: int) -> discord.Embed:
-        messages = await self.get_messages()
+    async def generate_messages_embed(self, start: int, end: int, messages: list) -> discord.Embed:
         embed = discord.Embed(title=f"Résultats {start}-{end} sur un total de {len(messages)}",
                               color=discord.Color.green())
         for i in range(start, end):
