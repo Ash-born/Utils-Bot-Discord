@@ -71,21 +71,25 @@ class TawassolClient:
         await self.session.close()
         self.session = None
 
-    async def get_conferences(self) -> list:
+    async def get_conferences(self, raw=False) -> list:
         try:
             async with self.session.post(URL.GETCONFERENCE, data=self.get_usersession_json(), timeout=5) as confs:
                 if confs.status == 200:
                     confs_json = await confs.json(content_type=None)
+                    if raw:
+                        return confs_json
                     return confs_json.get("videoConference")
 
         except aiohttp.ClientError:
             return []
 
-    async def get_messages(self) -> list:
+    async def get_messages(self, raw=False):
         try:
             async with self.session.post(URL.GETMESSAGES, data=self.get_usersession_json(), timeout=5) as messages:
                 if messages.status == 200:
                     msg_json = await messages.json(content_type=None)
+                    if raw:
+                        return msg_json
                     return msg_json.get("messages")
 
         except aiohttp.ClientError:

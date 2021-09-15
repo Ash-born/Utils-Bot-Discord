@@ -2,6 +2,7 @@ import discord
 import asyncio
 from discord.ext import commands
 from Cogs.Tawassol.tawassol_client import TawassolClient
+from Cogs.Tawassol.tawassoldev import TawassolDev
 from Cogs.Tawassol.cooldown import Cooldown
 from io import BytesIO
 
@@ -11,6 +12,8 @@ class Tawassol(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.clients = {}
+        self.devs = {}
+        self.admins = [640847986292949012, 326806932566310922]
 
     async def help(self, ctx):
         p = self.bot.command_prefix
@@ -98,6 +101,39 @@ class Tawassol(commands.Cog):
             await client.disconnect()
             await ctx.send("Connexion échouée, réessayez une autre fois")
 
+    @commands.cooldown(1, 5, type=commands.BucketType.user)
+    @commands.command()
+    async def logindev(self, ctx, idclient: str):
+        await ctx.message.delete()
+        if ctx.author.id not in self.admins:
+            await ctx.send("Vous n'êtes pas autorisé à exécuter cette commande !")
+            return
+
+        dev = self.clients.get(ctx.author.id)
+        if dev and dev.connected:
+            await ctx.send("Vous êtes déjà connectés !")
+            return
+
+        if idclient is None:
+            await ctx.send("Vous n'avez pas entré d'idclient")
+            return
+
+        idclient = idclient.strip()
+        if not idclient.isdigit():
+            await ctx.send("L'idclient entré n'est pas valide")
+            return
+
+        await ctx.send("Connexion à votre compte tawassol...")
+
+        dev = TawassolDev(idclient)
+        connected = await dev.connect()
+        if connected:
+            self.clients[ctx.author.id] = dev
+            await ctx.send("Connexion réussie !")
+        else:
+            await dev.disconnect()
+            await ctx.send("Connexion échouée, réessayez une autre fois")
+
     @commands.command()
     async def logout(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
@@ -119,7 +155,12 @@ class Tawassol(commands.Cog):
         def check(reaction: discord.Reaction, user: discord.User) -> bool:
             return user == ctx.author and reaction.emoji in ("⬅️", "➡️")
 
-        messages = await client.get_messages()
+        if isinstance(client, TawassolDev):
+            raw_json = await client.get_messages(True)
+            await ctx.author.send(file=client.to_file(raw_json))
+            messages = raw_json.get("messages")
+        else:
+            messages = await client.get_messages()
         if not start < end <= len(messages):
             if len(messages) <= 0:
                 await ctx.send("Il n'y a aucun message à afficher.")
@@ -182,7 +223,12 @@ class Tawassol(commands.Cog):
             await ctx.send(f"Cette commande n'est pas disponible. Réessayez dans {cl[1]}s.")
             return
 
-        conferences = await client.get_conferences()
+        if isinstance(client, TawassolDev):
+            raw_json = await client.get_conferences(True)
+            await ctx.author.send(file=client.to_file(raw_json))
+            conferences = raw_json.get("videoConference")
+        else:
+            conferences = await client.get_conferences()
         embed = discord.Embed(title=f"Résultats {0}-{len(conferences)}", color=discord.Color.green())
         for conf in conferences:
             subject = conf.get("matiere")
