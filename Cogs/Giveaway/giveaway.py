@@ -1,10 +1,10 @@
 import asyncio
-import discord
-from discord.ext import commands
-from datetime import timedelta
 import datetime as dt
 import random
-import pytz
+from datetime import timedelta
+
+import discord
+from discord.ext import commands
 from discord.ext.commands import has_permissions
 
 
@@ -16,7 +16,7 @@ class Giveaway(commands.Cog):
     @commands.command()
     @has_permissions(administrator=True)
     async def giveaway(self, ctx, times, *price):
-      try :
+        try:
             if "d" in times:
                 unity = "d"
                 times = str(times).split("d")[0]
@@ -37,7 +37,7 @@ class Giveaway(commands.Cog):
 
             if unity == 'd':
                 last_time = timedelta(days=int(times))
-                sleeping_time = int(times) *60  *60*24
+                sleeping_time = int(times) * 60 * 60 * 24
             if unity == 's':
                 last_time = timedelta(seconds=int(times))
                 sleeping_time = int(times)
@@ -68,7 +68,7 @@ class Giveaway(commands.Cog):
 
             if unity == 'd':
                 last_time = timedelta(days=int(times))
-                sleeping_time = int(times) *60  *60*24
+                sleeping_time = int(times) * 60 * 60 * 24
             if unity == 's':
                 last_time = timedelta(seconds=int(times))
                 sleeping_time = int(times)
@@ -88,7 +88,9 @@ class Giveaway(commands.Cog):
             embed = discord.Embed(title=f"🎉 {a} 🎉"
                                   , description=f"Time remaining is : {last_time}",
                                   color=0x8c82d3)
-            embed.add_field(name="Expected to finish at : ", value=f"{new_time.date()} at {new_time.hour}:{new_time.minute}:{new_time.second}", inline=True)
+            embed.add_field(name="Expected to finish at : ",
+                            value=f"{new_time.date()} at {new_time.hour}:{new_time.minute}:{new_time.second}",
+                            inline=True)
 
             test = await ctx.send(embed=embed)
             await test.add_reaction("🎉")
@@ -121,8 +123,9 @@ class Giveaway(commands.Cog):
                         await ctx.send(embed=embed)
                     except:
                         await ctx.send("Not enough players")
-      except :
+        except:
             await ctx.send("Error found : Invalide Syntaxe ")
+
 
 def setup(bot):
     bot.add_cog(Giveaway(bot))
