@@ -13,6 +13,7 @@ class Giveaway(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    # TODO: Refactor giveaway code
     @commands.command()
     @has_permissions(administrator=True)
     async def giveaway(self, ctx, times, *price):

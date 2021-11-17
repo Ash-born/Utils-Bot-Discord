@@ -24,7 +24,11 @@ class ServerManager(commands.Cog):
             diff = today - self.student_old_learnday
 
         text = f"Day : {diff.days}"
-        await ctx.channel.send(text)
+        embed = discord.Embed(
+            title=text,
+            color=13820385)
+        await ctx.channel.send(embed=embed)
+  #      await ctx.channel.send(    text)
         member = ctx.guild.get_member(self.student_id)
         await member.edit(nick=text)
 
@@ -32,37 +36,61 @@ class ServerManager(commands.Cog):
     @has_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.User = None, *, reason=None):
         if member == ctx.message.author:
-            await ctx.channel.send("You cannot kick yourself")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f" You cannot kick your self .",
+                color=0xe74c3c)
+            await ctx.channel.send(embed=embed)
+            return
         if reason is None:
-            reason = "For no reason"
-        message = f"You have been kicked from {ctx.guild.name}   {reason}"
-        i = 0
+            reason = "unspecified reason"
+        message = f"You have been kicked from {ctx.guild.name}  for {reason}"
+
         try:
             await ctx.guild.kick(member, reason=reason)
-            await ctx.channel.send(f"{member} was kick from the server  for  {reason}")
-            i += 1
-            await member.send(message)
+            embed = discord.Embed(
+                description=f" :no_entry: {member.name} was kicked from the server successfully .",
+                color=0xe74c3c)
 
+            #   await ctx.channel.send(f"{member} was k   ick from the server  for  {reason}")
+            await ctx.channel.send(embed=embed)
+            try:
+                embed = embed = discord.Embed(
+                    description=f" :no_entry: You were kicked  from the server for {reason} .",
+                    color=0xe74c3c)
+
+                await member.send(message)
+            except:
+                print("test")
         except:
-            if i == 0:
-                await ctx.channel.send("Denied Permession")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f" Not enough permission to execute this action .",
+                color=0xe74c3c)
 
-    @commands.command()
-    @has_permissions(kick_members=True)
-    async def kick_invite(self, ctx, member: discord.User = None, reason=None):
-        if member == ctx.message.author:
-            await ctx.channel.send("You cannot kick yourself")
-        if reason is None:
-            reason = "For no reason"
-        message = f"You have been kicked from {ctx.guild.name}   {reason}"
+            await ctx.channel.send(embed=embed)
 
-        link = await ctx.channel.create_invite(max_age=300)
-        try:
-            await member.send(f"Here is the link : {link}  ")
-        except:
-            await ctx.channel.send("Could not invite this member")
-        await ctx.guild.kick(member, reason=reason)
-        await ctx.channel.send(f"{member} was kick from the server  for  {reason}")
+    # @commands.command()
+    # @has_permissions(kick_members=True)
+    # async def kick_invite(self, ctx, member: discord.User = None, reason=None):
+    #     if member == ctx.message.author:
+    #         embed = discord.Embed(
+    #             title=" :bangbang: Bot found an error during execution :",
+    #             description=f" You cannot kick your self .",
+    #             color=0xe74c3c)
+    #         await ctx.channel.send(embed=embed)
+    #         return
+    #     if reason is None:
+    #         reason = "For no reason"
+    #     message = f"You have been kicked from {ctx.guild.name}   {reason}"
+    #
+    #     link = await ctx.channel.create_invite(max_age=300)
+    #     try:
+    #         await member.send(f"Here is the link : {link}  ")
+    #     except:
+    #         await ctx.channel.send("Could not invite this member")
+    #     await ctx.guild.kick(member, reason=reason)
+    #     await ctx.channel.send(f"{member} was kick from the server  for  {reason}")
 
     @commands.command()
     @has_permissions(manage_roles=True, ban_members=True)
@@ -91,24 +119,49 @@ class ServerManager(commands.Cog):
     async def ban(self, ctx, member: discord.User = None, reason=None):
 
         if member == ctx.message.author:
-            await ctx.channel.send("You cannot ban yourself")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f" You cannot ban your self .",
+                color=0xe74c3c)
+            await ctx.channel.send(embed=embed)
             return
         if reason is None:
-            reason = " fun"
+            reason = " unspecified reason"
         message = f"You have been banned from {ctx.guild.name} for {reason}"
-        i = 0
+
         try:
 
             await ctx.guild.ban(member, reason=reason)
-            await ctx.guild.send(f"{member} was  banned for {reason}")
-            i += 1
-            await member.send(message)
+            embed = discord.Embed(
+                description=f" :no_entry: {member.name} was banned from the server successfully .",
+                color=0xe74c3c)
+
+            await ctx.channel.send(embed=embed)
+            try:
+
+                await member.send(message)
+            except:
+                print("test")
 
         except:
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f" Not enough permission to execute this action .",
+                color=0xe74c3c)
 
-            if i == 0:
-                await ctx.channel.send("Denied Permession")
+            await ctx.channel.send(embed=embed)
 
+    # @commands.command()
+    # async def mute(self , ctx , member: discord.User = None):
+    #     if ctx.message.author == member :
+    #         embed = discord.Embed(
+    #             title=" :bangbang: Bot found an error during execution :",
+    #             description=f" You cannot mute yourself .",
+    #             color=0xe74c3c)
+    #         await ctx.channel.send(embed=embed)
+    #         return
+    #
+    # TODO: Refactor the ban tempo code
     @commands.command()
     @has_permissions(manage_roles=True, ban_members=True)
     async def ban_tempo(self, ctx, times, member: discord.User = None, reason=None):
@@ -151,6 +204,7 @@ class ServerManager(commands.Cog):
 
         await asyncio.sleep(sleeping_time)
         await ctx.guild.unban(member)
+
 
 def setup(bot):
     bot.add_cog(ServerManager(bot))
