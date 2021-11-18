@@ -21,64 +21,32 @@ class Giveaway(commands.Cog):
             if "d" in times:
                 unity = "d"
                 times = str(times).split("d")[0]
+                last_time = timedelta(days=int(times))
+                sleeping_time = int(times) * 60 * 60 * 24
             if "s" in times:
                 unity = "s"
                 times = str(times).split("s")[0]
+                last_time = timedelta(seconds=int(times))
+                sleeping_time = int(times)
             if "h" in times:
                 unity = "h"
                 times = str(times).split("h")[0]
+                last_time = timedelta(minutes=int(times))
+                sleeping_time = int(times) * 60 * 60
             if "m" in times:
                 unity = "m"
-
                 times = str(times).split("m")[0]
-
-            if int(times) == times:
-                await ctx.channel.send("Time should be a number")
-                return
-
-            if unity == 'd':
-                last_time = timedelta(days=int(times))
-                sleeping_time = int(times) * 60 * 60 * 24
-            if unity == 's':
-                last_time = timedelta(seconds=int(times))
-                sleeping_time = int(times)
-            if unity == 'm':
                 last_time = timedelta(minutes=int(times))
                 sleeping_time = int(times) * 60
-            if unity == 'h':
-                last_time = timedelta(hours=int(times))
-                sleeping_time = int(times) * 60 * 60
 
-            if "d" in times:
-                unity = "d"
-                times = str(times).split("d")[0]
-            if "s" in times:
-                unity = "s"
-                times = str(times).split("s")[0]
-            if "h" in times:
-                unity = "h"
-                times = str(times).split("h")[0]
-            if "m" in times:
-                unity = "m"
+            if int(times) == times or len(str(times)) > 2:
+                embed = discord.Embed(
+                    title=" :bangbang: Bot found an error during execution :",
+                    description=f"  Invalid Syntax.",
+                    color=0xe74c3c)
 
-                times = str(times).split("m")[0]
-
-            if int(times) == times:
-                await ctx.channel.send("Time should be a number")
+                await ctx.send(embed=embed)
                 return
-
-            if unity == 'd':
-                last_time = timedelta(days=int(times))
-                sleeping_time = int(times) * 60 * 60 * 24
-            if unity == 's':
-                last_time = timedelta(seconds=int(times))
-                sleeping_time = int(times)
-            if unity == 'm':
-                last_time = timedelta(minutes=int(times))
-                sleeping_time = int(times) * 60
-            if unity == 'h':
-                last_time = timedelta(hours=int(times))
-                sleeping_time = int(times) * 60 * 60
 
             a = ""
             t = dt.datetime.now()
@@ -86,7 +54,7 @@ class Giveaway(commands.Cog):
             for i in price:
                 a += i + " "
             await ctx.message.delete()
-            embed = discord.Embed(title=f"🎉 {a} 🎉"
+            embed = discord.Embed(title=f":tada: {a} :tada: "
                                   , description=f"Time remaining is : {last_time}",
                                   color=0x8c82d3)
             embed.add_field(name="Expected to finish at : ",
@@ -123,9 +91,19 @@ class Giveaway(commands.Cog):
                         embed.set_footer(text=f"Ended at {nouveau}")
                         await ctx.send(embed=embed)
                     except:
-                        await ctx.send("Not enough players")
+                        embed = discord.Embed(
+                            title=" :bangbang: Bot found an error during execution :",
+                            description=f" Not enough players .",
+                            color=0xe74c3c)
+
+                        await ctx.send(embed=embed)
         except:
-            await ctx.send("Error found : Invalide Syntaxe ")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f"  Invalid Syntax.",
+                color=0xe74c3c)
+
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

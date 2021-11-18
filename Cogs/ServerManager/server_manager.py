@@ -20,10 +20,11 @@ class ServerManager(commands.Cog):
         today = datetime.date.today()
         if counter == "new":
             diff = today - self.student_new_learnday
+            text = f"Day : {diff.days}"
         else:
             diff = today - self.student_old_learnday
-
-        text = f"Day : {diff.days}"
+            text = f"Day : {diff.days} (old)"
+     #   text = f"Day : {diff.days}"
         embed = discord.Embed(
             title=text,
             color=13820385)

@@ -3,3 +3,4 @@ markdownify
 aiohttp
 pytz
 PyYAML
+youtube-search-python
