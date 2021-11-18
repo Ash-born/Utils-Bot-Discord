@@ -1,6 +1,10 @@
-discord.py
 markdownify
 aiohttp
 pytz
 PyYAML
-youtube-search-python
+discord.py
+youtube_dl
+PyNaCl
+discord.py[voice]
+pytube
+
