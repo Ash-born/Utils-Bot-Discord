@@ -84,19 +84,42 @@ class Morpion(commands.Cog):
         print(error)
 
     @commands.command(name="morpion")
-    async def start_game(self, ctx: commands.Context, member: discord.Member):
+    async def start_game(self, ctx: commands.Context, member: discord.Member, pendule:  int = 10):
         if ctx.author == member:
-            await ctx.send("Tu ne peux pas jouer contre toi-même.")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f"You cannot play versus your self.",
+                color=0xe74c3c)
+
+            await ctx.send(embed=embed)
             return
         elif member.bot:
-            await ctx.send("Tu ne peux pas jouer contre un bot.")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f"You cannot play versus a discord bot.",
+                color=0xe74c3c)
+
+            await ctx.send(embed=embed)
+          #  await ctx.send("Tu ne peux pas jouer contre un bot.")
             return
 
         if ctx.author in self.players_ingame:
-            await ctx.send("Vous avez déjà une partie en cours !")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f"You have already a game in progress .",
+                color=0xe74c3c)
+
+            await ctx.send(embed=embed)
+         #   await ctx.send("Vous avez déjà une partie en cours !")
             return
         elif member in self.players_ingame:
-            await ctx.send("Votre adversaire a déjà une partie en cours !")
+            embed = discord.Embed(
+                title=" :bangbang: Bot found an error during execution :",
+                description=f"Your opponent  have already a game in progress .",
+                color=0xe74c3c)
+
+            await ctx.send(embed=embed)
+        #    await ctx.send("Votre adversaire a déjà une partie en cours !")
             return
         else:
             self.players_ingame.update((ctx.author, member))
@@ -109,16 +132,23 @@ class Morpion(commands.Cog):
         current_player = players[turn]
         running = True
         while running:
-            await ctx.send(f"{current_player[0].display_name}, votre tour !")
+            await ctx.send(f"{current_player[0].display_name}, Your Turn !")
             try:
-                msg = await self.bot.wait_for("message", check=lambda x: self.verify_message(x, current_player[0], board), timeout=10)
+                msg = await self.bot.wait_for("message", check=lambda x: self.verify_message(x, current_player[0], board), timeout=pendule)
             except asyncio.TimeoutError:
                 winner = players[not turn]
-                text = f"""
-Le joueur {current_player[0].display_name}({current_player[1]}) n'a pas répondu...
-Le joueur {winner[0]}({winner[1]}) gagne la partie !"""
+                text_perdant = f"The player {current_player[0].display_name}({current_player[1]}) did not respond..."
+                text_gagnant = f"The player {winner[0]}({winner[1]}) has won the game !"
+                embed = discord.Embed(
+                    title=" :x: Tic tac toe :o:",
+               #     description=f"You have already a game in progress .",
+                    color=0x8c82d3)
 
-                await ctx.send(text)
+
+                embed.add_field(name="Results : ",value =text_perdant+" " + text_gagnant)
+           #     embed.add_field(value = text_gagnant)
+                await ctx.send(embed=embed)
+            #    await ctx.send(text)
                 self.players_ingame.difference_update((ctx.author, member))
                 break
 
@@ -127,11 +157,22 @@ Le joueur {winner[0]}({winner[1]}) gagne la partie !"""
 
             victory = self.check_victory(board, current_player[1])
             if victory:
-                await ctx.send(f"Le joueur {current_player[0].display_name}({current_player[1]}) a gagné !")
+                embed = discord.Embed(
+                    title=" :x: Tic tac toe :o:",
+                    description=f"The player {current_player[0].display_name}({current_player[1]})has won the game !.",
+                    color=0x8c82d3)
+                await ctx.send(embed=embed)
+             #   await ctx.send(f"Le joueur {current_player[0].display_name}({current_player[1]}) a gagné !")
+
                 self.players_ingame.difference_update((ctx.author, member))
                 running = False
             elif victory is None:
-                await ctx.send("Égalité !")
+                embed = discord.Embed(
+                    title=" :x: Results : :o:",
+                    description=f"EQUALITY.",
+                    color=0x8c82d3)
+                await ctx.send(embed=embed)
+              #  await ctx.send("Égalité !")
                 self.players_ingame.difference_update((ctx.author, member))
                 running = False
             else:

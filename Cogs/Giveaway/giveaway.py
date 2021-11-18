@@ -19,22 +19,18 @@ class Giveaway(commands.Cog):
     async def giveaway(self, ctx, times, *price):
         try:
             if "d" in times:
-                unity = "d"
                 times = str(times).split("d")[0]
                 last_time = timedelta(days=int(times))
                 sleeping_time = int(times) * 60 * 60 * 24
             if "s" in times:
-                unity = "s"
                 times = str(times).split("s")[0]
                 last_time = timedelta(seconds=int(times))
                 sleeping_time = int(times)
             if "h" in times:
-                unity = "h"
                 times = str(times).split("h")[0]
                 last_time = timedelta(minutes=int(times))
                 sleeping_time = int(times) * 60 * 60
             if "m" in times:
-                unity = "m"
                 times = str(times).split("m")[0]
                 last_time = timedelta(minutes=int(times))
                 sleeping_time = int(times) * 60

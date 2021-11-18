@@ -24,12 +24,12 @@ class ServerManager(commands.Cog):
         else:
             diff = today - self.student_old_learnday
             text = f"Day : {diff.days} (old)"
-     #   text = f"Day : {diff.days}"
+        #   text = f"Day : {diff.days}"
         embed = discord.Embed(
             title=text,
             color=13820385)
         await ctx.channel.send(embed=embed)
-  #      await ctx.channel.send(    text)
+        #      await ctx.channel.send(    text)
         member = ctx.guild.get_member(self.student_id)
         await member.edit(nick=text)
 
@@ -167,25 +167,20 @@ class ServerManager(commands.Cog):
     @has_permissions(manage_roles=True, ban_members=True)
     async def ban_tempo(self, ctx, times, member: discord.User = None, reason=None):
         if "d" in times:
-            unity = "d"
             times = str(times).split("d")[0]
             last_time = timedelta(days=int(times))
             sleeping_time = int(times) * 60 * 60 * 24
         if "s" in times:
-            unity = "s"
             times = str(times).split("s")[0]
             last_time = timedelta(seconds=int(times))
             sleeping_time = int(times)
         if "h" in times:
-            unity = "h"
             times = str(times).split("h")[0]
             last_time = timedelta(hours=int(times))
             sleeping_time = int(times) * 60 * 60
         if "m" in times:
-            unity = "m"
             last_time = timedelta(minutes=int(times))
             sleeping_time = int(times) * 60
-            times = str(times).split("m")[0]
 
         if member == ctx.message.author:
             await ctx.channel.send("You cannot ban yourself")
