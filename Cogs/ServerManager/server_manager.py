@@ -116,6 +116,11 @@ class ServerManager(commands.Cog):
             await ctx.channel.send(f" An error occuried  : {member} is not banned")
 
     @commands.command()
+    async def github(self,ctx):
+
+        await ctx.channel.send("Check out our github at : https://github.com/Ash-born/Utils-Bot-Discord")
+
+    @commands.command()
     @has_permissions(manage_roles=True, ban_members=True)
     async def ban(self, ctx, member: discord.User = None, reason=None):
 
