@@ -2,16 +2,18 @@ import json
 import os.path
 from datetime import datetime
 from discord.ext import commands
-from Cogs.Tawassol.cooldown import Cooldown
+from cogs.Tawassol.cooldown import Cooldown
 
 
 class Counter(commands.Cog):
-    COUNTERS_DIR = "Cogs/Counter/counters.json"
-    USERS_DIR = "Cogs/Counter/users.json"
+    COUNTERS_DIR = "{cogs_dir}/Counter/counters.json"
+    USERS_DIR = "{cogs_dir}/Counter/users.json"
     MAXIMUM_COUNTERS = 2
 
     def __init__(self, bot):
         self.bot = bot
+        self.COUNTERS_DIR = self.COUNTERS_DIR.format(cogs_dir=self.bot.COGS_DIRECTORY)
+        self.USERS_DIR = self.USERS_DIR.format(cogs_dir=self.bot.COGS_DIRECTORY)
         self.counters = {}
         self.users = {}
         self.load()
@@ -77,6 +79,10 @@ class Counter(commands.Cog):
                 counters.append(counter_name)
 
         return counters
+
+    @commands.command()
+    async def test(self, ctx):
+        await ctx.send("Hello")
 
     @commands.command()
     async def counter(self, ctx: commands.Context, counter_name: str):

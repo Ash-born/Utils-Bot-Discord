@@ -1,0 +1,3 @@
+name: Debug
+main: debug
+load: True

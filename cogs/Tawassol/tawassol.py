@@ -1,9 +1,9 @@
 import discord
 import asyncio
 from discord.ext import commands
-from Cogs.Tawassol.tawassol_client import TawassolClient
-from Cogs.Tawassol.tawassoldev import TawassolDev
-from Cogs.Tawassol.cooldown import Cooldown
+from cogs.Tawassol.tawassol_client import TawassolClient
+from cogs.Tawassol.tawassoldev import TawassolDev
+from cogs.Tawassol.cooldown import Cooldown
 from io import BytesIO
 
 

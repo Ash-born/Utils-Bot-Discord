@@ -2,7 +2,7 @@ from io import BytesIO
 
 import discord
 import json
-from Cogs.Tawassol.tawassol_client import TawassolClient
+from cogs.Tawassol.tawassol_client import TawassolClient
 
 class TawassolDev(TawassolClient):
 
