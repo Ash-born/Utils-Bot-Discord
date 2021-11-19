@@ -81,10 +81,6 @@ class Counter(commands.Cog):
         return counters
 
     @commands.command()
-    async def test(self, ctx):
-        await ctx.send("Hello")
-
-    @commands.command()
     async def counter(self, ctx: commands.Context, counter_name: str):
         cl = Cooldown.check_user("counter", ctx.author.id, 5)
         if not cl[0]:

@@ -52,13 +52,12 @@ class MusicManager(commands.Cog):
         out_file = video.stream_to_buffer(out)
 
         out.seek(0)
-        source = FFmpegPCMAudio(out.read(), pipe=True, executable=r"C:\ffmpeg\ffmpeg.exe")
+        source = FFmpegPCMAudio(out.read(), pipe=True)
         player = voice.play(source)
 
     def on_progress(self, chunk: bytes, file_handler: BytesIO, bytes_remaining: int):
         print(bytes_remaining)
         file_handler.write(chunk)
-
 
 
 def setup(bot):
