@@ -79,10 +79,6 @@ class Morpion(commands.Cog):
 
         return text
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        print(error)
-
     @commands.command(name="morpion")
     async def start_game(self, ctx: commands.Context, member: discord.Member, pendule:  int = 10):
         if ctx.author == member:
