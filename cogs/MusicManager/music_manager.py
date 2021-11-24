@@ -1,63 +1,49 @@
-import re
-import urllib.request
-from io import BytesIO
-
 import discord
+from cogs.Misc.embeds import error
 from discord.ext import commands
-from discord.utils import get
-from pytube import YouTube
+from requests.exceptions import RequestException
 
-from cogs.MusicManager.ffmpegpcmaudio import FFmpegPCMAudio
+from cogs.MusicManager.music import Music
 
 
 class MusicManager(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.voice = None
 
     @commands.command()
-    async def play(self, ctx, *, args):
-
-        try:
-            html = urllib.request.urlopen(
-                "https://www.youtube.com/results?search_query=" + '"' + str(args).replace(" ", ''))
-            video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
-            url = "https://www.youtube.com/watch?v=" + video_ids[0]
-            await ctx.channel.send(url)
-        except:
-            embed = discord.Embed(
-                title=" :bangbang: Bot found an error during execution :",
-                description=f"Could not find a video with this name.",
-                color=0xe74c3c)
-            await ctx.send(embed=embed)
-
+    async def play(self, ctx: commands.Context, *, args):
         channel = ctx.message.author.voice.channel
         if not channel:
-            await ctx.send("You are not connected to a voice channel")
+            await ctx.send(embed=error("You are not connected to a voice channel"))
             return
 
-        voice = get(self.bot.voice_clients, guild=ctx.guild)
-        if voice and voice.is_connected():
-            await voice.move_to(channel)
-        else:
-            voice = await channel.connect()
+        try:
+            self.voice = await Music.connect(channel)
+            args = ''.join(args)
+            url = Music.search(args, 1)[0]
+            Music.play(url)
+            await ctx.channel.send(url)
+        except RequestException:
+            await ctx.send(embed=error("Could not find a video with this name."))
+        except discord.ClientException:
+            await ctx.send(embed=error("The bot is already playing audio. You can stop the session with 'utils stop'."))
 
-        yt = YouTube(url)
-        video = yt.streams.filter(only_audio=True).first()
+    @commands.command()
+    async def stop(self, ctx):
+        Music.stop(self.voice)
+        await ctx.send("Stopped the music.")
 
-        out = BytesIO()
+    @commands.command()
+    async def resume(self, ctx):
+        Music.resume(self.voice)
+        await ctx.send("Resumed the music.")
 
-        video.on_progress = lambda chunk, file_handler, bytes_remaining: self.on_progress(chunk, file_handler,
-                                                                                          bytes_remaining)
-        out_file = video.stream_to_buffer(out)
-
-        out.seek(0)
-        source = FFmpegPCMAudio(out.read(), pipe=True)
-        player = voice.play(source)
-
-    def on_progress(self, chunk: bytes, file_handler: BytesIO, bytes_remaining: int):
-        print(bytes_remaining)
-        file_handler.write(chunk)
+    @commands.command()
+    async def pause(self, ctx):
+        Music.pause(self.voice)
+        await ctx.send("Paused the music.")
 
 
 def setup(bot):
