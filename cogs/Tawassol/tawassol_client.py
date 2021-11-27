@@ -13,6 +13,7 @@ html_file = """
 <div>{content}</div>
 """
 
+
 class URL:
     TAWASSOLAPI = "https://tawassolapp.com/myspaceApi/"
     LOGIN = f"{TAWASSOLAPI}connecte/"
@@ -157,7 +158,7 @@ class TawassolClient:
 
         return out
 
-    async def generate_messages_embed(self, start: int, end: int, messages: list) -> discord.Embed:
+    def generate_messages_embed(self, start: int, end: int, messages: list) -> discord.Embed:
         embed = discord.Embed(title=f"Résultats {start}-{end} sur un total de {len(messages)}",
                               color=discord.Color.green())
         for i in range(start, end):

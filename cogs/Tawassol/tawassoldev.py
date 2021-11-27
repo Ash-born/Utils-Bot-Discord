@@ -4,6 +4,7 @@ import discord
 import json
 from cogs.Tawassol.tawassol_client import TawassolClient
 
+
 class TawassolDev(TawassolClient):
 
     def __init__(self, idclient):

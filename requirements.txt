@@ -5,3 +5,4 @@ markdownify
 PyYAML
 PyNaCl
 pytube
+validators

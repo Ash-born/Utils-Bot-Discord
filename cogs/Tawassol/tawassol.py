@@ -177,12 +177,13 @@ class Tawassol(commands.Cog):
         bonus = end - start
         last_start = start
         while True:
-            embed = await client.generate_messages_embed(start, start + bonus, messages)
+            embed = client.generate_messages_embed(start, start + bonus, messages)
             try:
                 embed_msg = await ctx.send(embed=embed)
             except discord.HTTPException:
                 await ctx.send(
-                    "Messages trop nombreux pour être affichés, veuillez indiquer une valeur de départ et/ou de fin plus petites")
+                    "Les messages trop nombreux pour être affichés, veuillez indiquer une valeur de départ et/ou de fin"
+                    "plus petites")
                 return
 
             await embed_msg.add_reaction("⬅️")
