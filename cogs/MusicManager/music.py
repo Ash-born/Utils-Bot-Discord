@@ -41,6 +41,7 @@ class Music:
         audio = yt.streams.filter(only_audio=True).first()
         od = discord.FFmpegPCMAudio(audio.url)
         voice.play(od)
+        return url
 
     @classmethod
     def resume(cls, voice: discord.VoiceClient = last_voice):

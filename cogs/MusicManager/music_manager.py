@@ -21,10 +21,8 @@ class MusicManager(commands.Cog):
 
         try:
             self.voice = await Music.connect(channel)
-            args = ''.join(args)
-            url = Music.search(args, 1)[0]
-            Music.play(url)
-            await ctx.channel.send(url)
+            url = ''.join(args)
+            await ctx.channel.send(Music.play(url))
         except RequestException:
             await ctx.send(embed=error("Could not find a video with this name."))
         except discord.ClientException:
