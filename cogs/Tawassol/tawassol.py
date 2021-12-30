@@ -1,21 +1,33 @@
+import logging
+
 import discord
 import asyncio
 from discord.ext import commands
+from io import BytesIO
+
+from bot import Bot
 from cogs.Tawassol.tawassol_client import TawassolClient
 from cogs.Tawassol.tawassoldev import TawassolDev
 from cogs.Tawassol.cooldown import Cooldown
-from io import BytesIO
+
+
+logger = logging.getLogger(__name__)
 
 
 class Tawassol(commands.Cog):
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.clients = {}
         self.devs = {}
-        self.admins = [640847986292949012, 326806932566310922]
+        self.admins = self.bot.debuggers
+        self.help_embed = None
 
-    async def help(self, ctx):
+    async def help(self, ctx, command: str):
+        if self.help_embed:
+            await ctx.send(embed=self.help_embed)
+            return
+
         p = self.bot.command_prefix
         embed = discord.Embed(title="Voici la liste de toutes les commandes disponibles !", color=discord.Color.red())
 
@@ -73,6 +85,7 @@ class Tawassol(commands.Cog):
             inline=False
         )
 
+        self.help_embed = embed
         await ctx.send(embed=embed)
 
     @commands.cooldown(1, 5, type=commands.BucketType.user)
@@ -138,7 +151,8 @@ class Tawassol(commands.Cog):
     async def logout(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
         if client is None:
-            await ctx.send(f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
+            await ctx.send(
+                f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
             return
 
         await client.disconnect()
@@ -208,7 +222,7 @@ class Tawassol(commands.Cog):
                     last_start = start
                 continue
             except asyncio.TimeoutError as e:
-                print(e)
+                logger.debug(e)
 
             break
 
@@ -216,7 +230,8 @@ class Tawassol(commands.Cog):
     async def confs(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
         if client is None or not client.connected:
-            await ctx.send(f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
+            await ctx.send(
+                f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
             return
 
         cl = Cooldown.check_user("confs", ctx.author.id, 10)
@@ -246,7 +261,8 @@ class Tawassol(commands.Cog):
     async def lastconf(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
         if client is None or not client.connected:
-            await ctx.send(f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
+            await ctx.send(
+                f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
             return
 
         cl = Cooldown.check_user("lastconf", ctx.author.id, 10)
@@ -274,7 +290,8 @@ class Tawassol(commands.Cog):
     async def zip(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
         if client is None or not client.connected:
-            await ctx.send(f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
+            await ctx.send(
+                f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
             return
 
         cl = Cooldown.check_user("zip", ctx.author.id, 10)
@@ -304,7 +321,8 @@ class Tawassol(commands.Cog):
     async def checker(self, ctx: commands.Context):
         client = self.clients.get(ctx.author.id)
         if client is None or not client.connected:
-            await ctx.send(f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
+            await ctx.send(
+                f"Vous n'êtes pas encore connecté ! Connectez-vous avec la commande {self.bot.command_prefix}login")
             return
 
         if client.running:
