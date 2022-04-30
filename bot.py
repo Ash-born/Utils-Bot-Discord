@@ -1,11 +1,13 @@
-import asyncio
-import io
-import sys
-import logging
 import os
-import discord
 import yaml
+import asyncio
+import logging
+import discord
+from io import StringIO
 from discord.ext import commands
+from cogs.Misc.embeds import error
+from cogs.Misc.help import make_help
+from cogs.Misc.page import Page
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ class Bot(commands.Bot):
         self.PREFIX = None
         self.TOKEN = None
         self.DEBUG = None
-        self.logs = io.StringIO()
+        self.logs = StringIO()
         self.process_args()
 
         Bot.instance = self
@@ -52,8 +54,8 @@ class Bot(commands.Bot):
 
             start = 0
             bonus = cogs_help_count
-            last_start = 0
             len_cogs = len(self.cogs)
+            page = Page(0, len_cogs, bonus)
 
             def check(reaction: discord.Reaction, user: discord.User) -> bool:
                 return user == ctx.author and reaction.emoji in ("⬅️", "➡️")
@@ -68,21 +70,14 @@ class Bot(commands.Bot):
                 try:
                     reaction, user = await self.wait_for("reaction_add", timeout=5, check=check)
                     if reaction.emoji == "⬅️":
-                        start -= bonus
-                        if start < start + bonus < bonus:
-                            start = 0
-                            if last_start == start:
-                                break
+                        start, last_start = page.last()
+                        if start == last_start:
+                            break
 
-                        last_start = start
                     else:
-                        start += bonus
-                        if start < start + bonus > len_cogs:
-                            start = len_cogs - 1
-                            if last_start == start:
-                                break
-
-                        last_start = start
+                        start, last_start = page.next()
+                        if start == last_start:
+                            break
 
                     continue
                 except asyncio.TimeoutError as e:
@@ -91,19 +86,19 @@ class Bot(commands.Bot):
         else:
             cog = self.get_cog(module)
             if cog is None or getattr(cog, "hidden", False):
-                await ctx.send(f"Ce module est introuvable. Veuillez en renseigner un ou taper '{self.PREFIX}help'")
+                await ctx.send(embed=error(f"Ce module est introuvable. Veuillez en renseigner un ou taper '{self.PREFIX}help'"))
                 return
 
             cog_help_func = getattr(cog, "help", False)
             if not cog_help_func:
-                await ctx.send("Ce module ne contient pas encore d'aide. :frowning:")
+                await ctx.send(embed=make_help(cog, command))
                 return
 
             try:
                 await cog_help_func(ctx, command)
             except Exception as e:
-                logger.debug(f"Exception : {e}")
-                await ctx.send("Une erreur est survenue en essayant d'afficher l'aide du module. :rage:")
+                logger.exception(f"Exception :", exc_info=e)
+                await ctx.send(embed=error("Une erreur est survenue en essayant d'afficher l'aide du module. :rage:"))
 
     def generate_help_embed(self, start: int, end: int, embed: discord.Embed = None):
         if embed is None:
@@ -116,9 +111,7 @@ class Bot(commands.Bot):
 
             cog_commands = ""
             cmds = cog.get_commands()
-            cmds_help_count = self.MAX_COMMANDS_HELP
-            if cmds_help_count > len(cmds):
-                cmds_help_count = len(cmds)
+            cmds_help_count = min(self.MAX_COMMANDS_HELP, len(cmds))
 
             for cmd in cmds[: cmds_help_count]:
                 if cmd.hidden:
@@ -130,6 +123,9 @@ class Bot(commands.Bot):
 
         return embed
 
+    def get_cog_directory(self, cog_name: str):
+        return os.path.join(self.COGS_DIRECTORY, cog_name)
+
     def process_args(self):
         args = self.args
         if not args:
@@ -138,18 +134,26 @@ class Bot(commands.Bot):
         self.TOKEN = args.get("token") or os.getenv("TOKEN")
         self.PREFIX = args.get("prefix") or os.getenv("PREFIX")
 
-        logs_handler = logging.StreamHandler(self.logs)
-        stdout_handler = logging.StreamHandler(sys.stdout)
         self.DEBUG = args.get("debug") or __debug__
         level = logging.DEBUG if self.DEBUG else logging.INFO
-        logging.basicConfig(level=level, format=self.FORMAT)
+        file_handler = logging.FileHandler(filename="debug.log", mode="a", encoding="UTF-8")
+        logs_stream_handler = logging.StreamHandler(self.logs)
+        logging.basicConfig(
+            level=level,
+            format=self.FORMAT,
+            handlers=[
+                file_handler,
+                logs_stream_handler,
+                logging.StreamHandler()
+            ]
+        )
 
     def load_cogs(self):
         cogs_directory = self.COGS_DIRECTORY
         for cog in os.listdir(cogs_directory):
             logger.debug(" " * 20)
-            directory = f"{cogs_directory}/{cog}/"
-            cog_file = f"{directory}cog.yml"
+            directory = self.get_cog_directory(cog)
+            cog_file = os.path.join(directory, "cog.yml")
             logger.info(f"Walking into {directory}")
             if not os.path.exists(cog_file):
                 logger.debug(f"{cog_file} does not exist, pass...")
@@ -157,11 +161,7 @@ class Bot(commands.Bot):
 
             logger.debug(f"{cog_file} exists, loading cog...")
             with open(cog_file, "r") as stream:
-                try:
-                    yml = yaml.safe_load(stream)
-                except yaml.YAMLError as e:
-                    raise e
-
+                yml = yaml.safe_load(stream)
                 cog_name = yml.get("name", "Unnamed Cog")
                 main_cog_file = yml.get("main")
                 load = yml.get("load", True)

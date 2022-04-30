@@ -8,7 +8,7 @@ from io import BytesIO
 from bot import Bot
 from cogs.Tawassol.tawassol_client import TawassolClient
 from cogs.Tawassol.tawassoldev import TawassolDev
-from cogs.Tawassol.cooldown import Cooldown
+from cogs.Misc.cooldown import Cooldown
 
 
 logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class Tawassol(commands.Cog):
             await ctx.send("Connexion échouée, réessayez une autre fois")
 
     @commands.cooldown(1, 5, type=commands.BucketType.user)
-    @commands.command()
+    @commands.command(hidden=True)
     async def logindev(self, ctx, idclient: str):
         await ctx.message.delete()
         if ctx.author.id not in self.admins:

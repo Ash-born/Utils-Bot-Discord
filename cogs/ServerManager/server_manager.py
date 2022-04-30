@@ -15,7 +15,11 @@ class ServerManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(hidden=True)
+    async def yo(self, ctx):
+        await ctx.send("yo")
+
+    @commands.command(hidden=True)
     async def day(self, ctx, counter="new"):
         today = datetime.date.today()
         if counter == "new":
@@ -117,7 +121,6 @@ class ServerManager(commands.Cog):
 
     @commands.command()
     async def github(self,ctx):
-
         await ctx.channel.send("Check out our github at : https://github.com/Ash-born/Utils-Bot-Discord")
 
     @commands.command()

@@ -1,12 +1,12 @@
-import discord
+from discord import Embed, Colour
 
-ERROR_EMBED = discord.Embed(
+ERROR_EMBED = Embed(
     title=" :bangbang: **Bot found an error during execution**",
-    color=discord.Colour.red()
+    color=Colour.red()
 )
 
 
-def error(reason: str) -> discord.Embed:
+def error(reason: str) -> Embed:
     embed = ERROR_EMBED.copy()
     embed.description = reason
     return embed

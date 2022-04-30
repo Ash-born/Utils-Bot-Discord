@@ -1,26 +1,6 @@
 import argparse
 import os
-
-YML_FILE = """name: {name}
-main: {main}
-load: True
-"""
-
-COG_FILE = """from discord.ext import commands
-
-
-class {name}(commands.Cog):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-
-def setup(bot):
-    bot.add_cog({name}(bot))
-
-"""
-
-DEFAULT_COGS_FOLDER = "cogs/"
+from default_cog import *
 
 
 def setup(args: dict):
@@ -41,9 +21,8 @@ Cog directory: {cog_dir}
     if not os.path.exists(cogs_folder):
         raise FileNotFoundError("Cogs folder does not exist.")
 
-    if not os.path.exists(cog_dir):
-        print(f"Directory '{cog_dir}' does not exist, creating the directory...")
-        os.mkdir(cog_dir)
+    print(f"Creating the directory '{cog_dir}'...")
+    os.mkdir(cog_dir)
 
     with open(f"{os.path.join(cog_dir, 'cog.yml')}", "w") as yml_file:
         print(f"Creating 'cog.yml' to: '{os.path.join(cog_dir, 'cog.yml')}'")

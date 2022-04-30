@@ -2,18 +2,17 @@ import json
 import os.path
 from datetime import datetime
 from discord.ext import commands
-from cogs.Tawassol.cooldown import Cooldown
+from cogs.Misc.cooldown import Cooldown
 
 
 class Counter(commands.Cog):
-    COUNTERS_DIR = "{cogs_dir}/Counter/counters.json"
-    USERS_DIR = "{cogs_dir}/Counter/users.json"
     MAXIMUM_COUNTERS = 2
 
     def __init__(self, bot):
         self.bot = bot
-        self.COUNTERS_DIR = self.COUNTERS_DIR.format(cogs_dir=self.bot.COGS_DIRECTORY)
-        self.USERS_DIR = self.USERS_DIR.format(cogs_dir=self.bot.COGS_DIRECTORY)
+        self.cog_dir = self.bot.get_cog_directory(type(self).__name__)
+        self.counters_dir = os.path.join(self.cog_dir, "counters.json")
+        self.users_dir = os.path.join(self.cog_dir, "users.json")
         self.counters = {}
         self.users = {}
         self.load()
@@ -23,25 +22,19 @@ class Counter(commands.Cog):
         self.load_users()
 
     def load_counters(self):
-        if not os.path.isfile(self.COUNTERS_DIR):
-            return
-
-        with open(self.COUNTERS_DIR, "r") as counters:
+        with open(self.counters_dir, "r") as counters:
             self.counters = json.load(counters)
 
     def load_users(self):
-        if not os.path.isfile(self.USERS_DIR):
-            return
-
-        with open(self.USERS_DIR, "r") as users:
+        with open(self.users_dir, "r") as users:
             self.users = json.load(users)
 
     def update_counters(self):
-        with open(self.COUNTERS_DIR, "w") as counter_file:
+        with open(self.counters_dir, "w") as counter_file:
             json.dump(self.counters, counter_file, default=str, indent=4)
 
     def update_users(self):
-        with open(self.USERS_DIR, "w") as users:
+        with open(self.users_dir, "w") as users:
             json.dump(self.users, users, indent=4)
 
     def remove_counter(self, counter_name: str, counter_author: int):
