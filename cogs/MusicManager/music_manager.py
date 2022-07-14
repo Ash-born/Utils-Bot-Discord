@@ -13,16 +13,21 @@ class MusicManager(commands.Cog):
         self.voice = None
 
     @commands.command()
-    async def play(self, ctx: commands.Context, *, args):
+    async def play(self, ctx: commands.Context, *, args="https://www.youtube.com/watch?v=21VopdemljE&ab_channel=ISSOU"):
         channel = ctx.message.author.voice.channel
+        finished= False
         if not channel:
             await ctx.send(embed=error("You are not connected to a voice channel"))
             return
 
         try:
             self.voice = await Music.connect(channel)
+
             url = ''.join(args)
-            await ctx.channel.send(Music.play(url))
+            await ctx.channel.send(Music.play(url,finished))
+
+
+
         except RequestException:
             await ctx.send(embed=error("Could not find a video with this name."))
         except discord.ClientException:

@@ -1,3 +1,4 @@
+import asyncio
 import re
 import discord
 import requests
@@ -32,7 +33,11 @@ class Music:
         return [f"https://www.youtube.com/watch?v={video_ids[video_id]}" for video_id in range(max_videos)]
 
     @classmethod
-    def play(cls, url: str, voice: discord.VoiceClient = None):
+    def finish(cls, finished):
+        finished= True
+
+    @classmethod
+    def play(cls, url: str, finished = None, voice: discord.VoiceClient = None):
         voice = voice or cls.last_voice
         if not is_valid_url(url):
             url = cls.search(url, 1)[0]
@@ -40,7 +45,7 @@ class Music:
         yt = YouTube(url)
         audio = yt.streams.filter(only_audio=True).first()
         od = discord.FFmpegPCMAudio(audio.url)
-        voice.play(od)
+        voice.play(od, after=lambda e: cls.finish(finished))
         return url
 
     @classmethod

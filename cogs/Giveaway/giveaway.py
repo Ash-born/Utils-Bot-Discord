@@ -2,7 +2,9 @@ import asyncio
 import datetime as dt
 import random
 from datetime import timedelta
-
+import requests
+from datetime import datetime
+import json
 import discord
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -14,6 +16,54 @@ class Giveaway(commands.Cog):
         self.bot = bot
 
     # TODO: Refactor giveaway code
+
+    @commands.command()
+    @has_permissions(administrator=True)
+    async def rules(self, ctx):
+        embed = discord.Embed(color=0x546e7a)
+        embed.set_image(url="https://tenor.com/view/rules-gif-20540630")
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @has_permissions(administrator=True)
+    async def mmr(self, ctx,*,username):
+
+        data = {'name': username}
+        req = requests.get('https://euw.whatismymmr.com/api/v1/summoner', params=data)
+        try :
+            mmr_points = req.json().get('ranked').get('avg')
+            mmr_rank = req.json().get('ranked').get('closestRank')
+            last_check_time_rank = req.json().get('ranked').get('timestamp')
+            last_check_time_rank = datetime.fromtimestamp(last_check_time_rank)
+        except :
+            embed = discord.Embed(color=0x546e7a)
+            a = "Nous ne parvenons pas à trouver des données à propos de ce joueur . "
+            embed.add_field(name=":x: ERROR ", value=a)
+
+            await ctx.send(embed=embed)
+            return
+        if mmr_points == None or mmr_rank == None or mmr_points == "None" or mmr_rank == "None":
+                embed = discord.Embed(color=0x546e7a)
+                a = ":x: Nous ne parvenons pas à trouver des données à propos de ce joueur . "
+                embed.add_field(name=":x: ERROR " ,value = a)
+
+                await ctx.send(embed=embed)
+                return
+
+        embed = discord.Embed(color=0x546e7a)
+        embed.title = f"Stats of {str(username).upper()} : "
+        embed.add_field(name =  "MMR POINTS  :" ,value = mmr_points)
+        embed.add_field(name =  "  MMR RANK  :" ,value = mmr_rank)
+        embed.add_field(name =  "  LAST CHECK TIME :" ,value = last_check_time_rank)
+        await ctx.send(embed=embed)
+        return
+
+
+    @commands.command()
+    @has_permissions(administrator=True)
+    async def spam(self,ctx):
+        while True :
+            await ctx.channel.send(f"AJD T MORT JE TE NIQUE TA MERE  <@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668><@717368108192366668>   ")
     @commands.command()
     @has_permissions(administrator=True)
     async def giveaway(self, ctx, times, *price):
